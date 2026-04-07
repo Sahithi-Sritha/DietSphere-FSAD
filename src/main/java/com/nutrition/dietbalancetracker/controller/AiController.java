@@ -105,9 +105,16 @@ public class AiController {
     @GetMapping("/status")
     public ResponseEntity<Map<String, Object>> status() {
         boolean available = aiService.isOllamaAvailable();
-        return ResponseEntity.ok(Map.of(
-                "ollamaAvailable", available,
-                "message", available ? "Ollama is running and ready" : "Ollama is not reachable. Run 'ollama serve' to start it."
-        ));
+        if (available) {
+            return ResponseEntity.ok(Map.of(
+                    "status", "online",
+                    "message", "Ollama is running and ready"
+            ));
+        } else {
+            return ResponseEntity.ok(Map.of(
+                    "status", "offline",
+                    "message", "Ollama not available in cloud deployment"
+            ));
+        }
     }
 }

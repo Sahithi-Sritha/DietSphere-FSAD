@@ -1,7 +1,10 @@
 package com.nutrition.dietbalancetracker.security;
 
 import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -32,6 +35,9 @@ public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     
+    @Value("${FRONTEND_URL:http://localhost:5173,http://localhost:3000}")
+    private String frontendUrls;
+    
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -55,8 +61,16 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        // Allow all localhost ports for development
-        configuration.setAllowedOriginPatterns(Arrays.asList("http://localhost:*"));
+        
+        // Parse comma-separated frontend URLs
+        List<String> allowedOrigins = Arrays.asList(frontendUrls.split(","));
+        
+        // Trim whitespace from each URL
+        allowedOrigins = allowedOrigins.stream()
+            .map(String::trim)
+            .toList();
+        
+        configuration.setAllowedOrigins(allowedOrigins);
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);

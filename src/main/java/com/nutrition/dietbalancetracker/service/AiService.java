@@ -97,15 +97,13 @@ public class AiService {
 
             return "I'm sorry, I couldn't generate a response. Please try again.";
 
+        } catch (org.springframework.web.client.RestClientException e) {
+            // Graceful fallback for cloud deployment without Ollama
+            log.warn("Ollama not available (cloud mode): {}", e.getMessage());
+            return "I'm currently running in cloud mode without a local AI model. For AI-powered advice, please run the app locally with Ollama installed. In the meantime, check your Nutrition Analysis page for deficiency recommendations!";
         } catch (Exception e) {
-            log.error("Error calling Ollama: {}", e.getMessage());
-            if (e.getMessage() != null && e.getMessage().contains("Connection refused")) {
-                return "⚠️ **Ollama is not running.** Please start Ollama on your machine:\n\n"
-                        + "1. Run `ollama serve` in a terminal\n"
-                        + "2. Pull the model: `ollama pull " + ollamaModel + "`\n"
-                        + "3. Come back and try again!";
-            }
-            return "I encountered an error while processing your request. Please ensure Ollama is running and try again.";
+            log.error("Unexpected error calling Ollama: {}", e.getMessage());
+            return "I'm currently running in cloud mode without a local AI model. For AI-powered advice, please run the app locally with Ollama installed. In the meantime, check your Nutrition Analysis page for deficiency recommendations!";
         }
     }
 
