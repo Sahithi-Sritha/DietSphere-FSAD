@@ -1,0 +1,10 @@
+# Nixpacks configuration for Railway deployment
+
+[phases.setup]
+nixPkgs = ["maven", "jdk21"]
+
+[phases.build]
+cmds = ["mvn clean package -DskipTests"]
+
+[start]
+cmd = "java -jar target/diet-balance-tracker-1.0.0.jar"

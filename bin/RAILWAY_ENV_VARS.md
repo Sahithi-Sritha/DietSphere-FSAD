@@ -14,8 +14,8 @@ This document lists all environment variables you need to set in Railway's dashb
 ---
 
 ## Required Environment Variables
-### 1. SPRING_PROFILES_ACTIVE
 
+### 1. SPRING_PROFILES_ACTIVE
 **Description**: Tells Spring Boot to use the production configuration file (`application-prod.properties`)
 
 **Value**: 
@@ -133,27 +133,26 @@ Xk7mP9vR2wQ8nL5tY3jH6bN4cV1zS0aF8dG2eK9mW7x
 
 Single URL:
 ```
-https://diet-sphere.vercel.app
+https://dietsphere.vercel.app
 ```
 
 Multiple URLs (production + staging):
 ```
-https://diet-sphere.vercel.app,https://diet-sphere-staging.vercel.app
+https://dietsphere.vercel.app,https://dietsphere-staging.vercel.app
 ```
 
 With localhost for testing:
 ```
-https://diet-sphere.vercel.app,http://localhost:5173
+https://dietsphere.vercel.app,http://localhost:5173
 ```
 
-**Default**: If not set, falls back to `http://localhost:5173,http://localhost:3000`
+**Default**: If not set, falls back to `http://localhost:5173`
 
 **Important**: 
 - Include `https://` or `http://` prefix
 - No trailing slash
 - Separate multiple URLs with commas (no spaces)
 - Must match exactly what the browser sends in the Origin header
-- Your current frontend is at: `https://diet-sphere.vercel.app` (note the hyphen)
 
 ---
 
@@ -295,7 +294,7 @@ MYSQL_URL=jdbc:mysql://containers-us-west-123.railway.app:3306/railway
 MYSQL_USER=root
 MYSQL_PASSWORD=abc123xyz789
 JWT_SECRET=Xk7mP9vR2wQ8nL5tY3jH6bN4cV1zS0aF8dG2eK9mW7x
-FRONTEND_URL=https://diet-sphere.vercel.app
+FRONTEND_URL=https://dietsphere.vercel.app
 
 # Optional (Railway sets automatically)
 PORT=8080
