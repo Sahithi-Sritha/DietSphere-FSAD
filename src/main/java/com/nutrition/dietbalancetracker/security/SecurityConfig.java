@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -19,6 +20,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -45,8 +47,22 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/**", "/api/health", "/api/welcome", "/error").permitAll()
+                // CRITICAL: Allow OPTIONS requests for CORS preflight (must be first)
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                // Public endpoints that don't require authentication
+                .requestMatchers("/api/auth/register").permitAll()
+                .requestMatchers("/api/auth/login").permitAll()
+                .requestMatchers("/api/health").permitAll()
+                .requestMatchers("/api/welcome").permitAll()
+                .requestMatchers("/error").permitAll()
+                .requestMatchers("/").permitAll()
+                // All other requests require authentication
                 .anyRequest().authenticated()
+            )
+            .exceptionHandling(ex -> ex
+                // Custom entry point to return 401 instead of 403 for unauthenticated requests
+                .authenticationEntryPoint((req, res, e) -> 
+                    res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized"))
             )
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         
