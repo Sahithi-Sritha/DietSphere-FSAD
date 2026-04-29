@@ -69,9 +69,9 @@ public class UserService {
         String identifier = dto.getUsername().trim();
 
         // Find user by username first, then try email for convenience
-        User user = userRepository.findByUsername(identifier)
-            .or(() -> userRepository.findByEmail(identifier.toLowerCase()))
-                .orElseThrow(() -> new RuntimeException("Invalid username or password"));
+        User user = userRepository.findByUsernameIgnoreCase(identifier)
+            .or(() -> userRepository.findByEmailIgnoreCase(identifier))
+            .orElseThrow(() -> new RuntimeException("Invalid username or password"));
         
         // Check password
         if (!passwordEncoder.matches(dto.getPassword(), user.getPasswordHash())) {
